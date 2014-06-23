@@ -45,8 +45,8 @@ func (fs *fileServer) Serve(root http.FileSystem) http.Handler {
 		name := path.Clean(upath)
 
 		if file, ok := fs.cache[name]; ok {
-			//http.ServeContent(w, r, file.name, file.modTime, bytes.NewReader(file.data))
-			io.Copy(w, bytes.NewReader(file.data))
+			http.ServeContent(w, r, file.name, file.modTime, bytes.NewReader(file.data))
+			// io.Copy(w, bytes.NewReader(file.data))
 			return
 		}
 
@@ -139,6 +139,7 @@ func New(opts Options) FileServer {
 
 // Quit terminates the file server's detection goroutine.
 func Quit(quitC chan<- struct{}, doneC <-chan struct{}) {
+	// TODO Implement Quit
 	quitC <- struct{}{}
 	<-doneC
 }
