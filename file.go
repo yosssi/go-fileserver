@@ -6,5 +6,6 @@ import "time"
 type file struct {
 	name    string
 	modTime time.Time
+	size    int64
 	data    []byte
 }
