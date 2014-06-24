@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Go file server equipped with caching feature.
+This is a Go file server equipped with caching feature. See [this discussion](http://www.reddit.com/r/golang/comments/28so0e/go_networking_performance_vs_nginx/cif19e1).
 
 ## Example
 
