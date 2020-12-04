@@ -73,6 +73,8 @@ func (fs *fileServer) Serve(root http.FileSystem) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
+		f2, _ := root.Open(name)
+		defer f2.Close()
 		defer f.Close()
 
 		d, err := f.Stat()
@@ -100,8 +102,10 @@ func (fs *fileServer) Serve(root http.FileSystem) http.Handler {
 		if d.IsDir() {
 			index := name + fs.indexPage
 			ff, err := root.Open(index)
+			f2, _ = root.Open(index)
 			if err == nil {
 				defer ff.Close()
+				defer f2.Close()
 				dd, err := ff.Stat()
 				if err == nil {
 					d = dd
@@ -122,13 +126,18 @@ func (fs *fileServer) Serve(root http.FileSystem) http.Handler {
 		fs.serveContent(w, r, d.Name(), d.ModTime(), d.Size(), f)
 
 		var buf bytes.Buffer
-		io.Copy(&buf, f)
+		_, err = io.Copy(&buf, f2)
+		if err != nil {
+			log.Warn(err)
+		}
 
 		fs.cache[name] = file{
 			name:    d.Name(),
 			modTime: d.ModTime(),
 			data:    buf.Bytes(),
+			size:    int64(len(buf.Bytes())),
 		}
+
 	})
 }
 
